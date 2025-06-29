@@ -16,18 +16,29 @@ def check_input_length(
         raise ValueError(stop_message)
 
 
-def input_provided(val: any):
+def input_provided(val: any) -> bool:
+    """
+    applicable to (as of shiny 1.4.0):
+    - ui.input_selectize : str | tuple[str, ...]
+    - ui.input_date: date | None,
+    - ui.input_date_range: tuple[date | None, date | None]
+    - ui.input_checkbox: tuple[str, ...]
+    - ui.input_numeric: int | float | None
+    - ui.input_text: str
+    - ui.input_text_area: str
+    - ui.input_password: str
+    all other ui.input_* are inapplicable or unnecessary.
+
+    this function is not the same as bool because bool
+    - treats 0 as falsy
+    - treats a tuple containing None as truthy
+    """
     if val is None:
         return False
-    if isinstance(val, Exception):
+    if isinstance(val, str | tuple) and len(val) == 0:
         return False
-    if not isinstance(val, (int, float, str, bool)):
-        return True
-    if val is None:
+    if isinstance(val, tuple) and any(v is None for v in val):
         return False
-    if isinstance(val, str) and not any(x for x in val if x != ""):
-        return False
-    # TODO action button
     return True
 
 
